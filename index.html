@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday!</title>
+    
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-pink': '#ffd1d9',
+                        'brand-red': '#e06666',
+                        'brand-dark': '#333333'
+                    },
+                    fontFamily: {
+                        'cursive': ['"Dancing Script"', 'cursive'],
+                        'sans': ['"Quicksand"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #ffd1d9;
+            /* Cute scalloped border at the top and bottom simulated with radial gradients */
+            background-image: radial-gradient(circle at 10px 0, transparent 10px, #ffd1d9 11px), radial-gradient(circle at 10px 100%, transparent 10px, #ffd1d9 11px);
+            background-size: 20px 100%;
+            background-repeat: repeat-x;
+            background-attachment: fixed; /* Ensures background stays put on mobile scrolling */
+        }
+
+        /* Smooth fade-in transition for screens */
+        .slide {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            transform: translateY(20px);
+            width: 100%;
+        }
+        
+        .slide.active {
+            display: flex;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Fun button hover effect */
+        .btn-hover:hover {
+            transform: scale(1.05);
+            transition: transform 0.2s;
+        }
+
+        /* Floating background hearts */
+        .floating-heart {
+            position: absolute;
+            animation: float 6s ease-in-out infinite;
+            opacity: 0.6;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        /* Paper texture for the letter */
+        .paper-shadow {
+            box-shadow: 2px 4px 15px rgba(0,0,0,0.1);
+            transform: rotate(-2deg);
+        }
+
+        /* Ensure interactive elements stay above decorations */
+        .content-container {
+            z-index: 10;
+        }
+
+        /* Cake & Balloons CSS */
+        .candle-flame {
+            animation: flicker 0.6s ease-in-out infinite alternate;
+            transform-origin: bottom center;
+        }
+        @keyframes flicker {
+            0% { transform: scale(0.9) rotate(-2deg); opacity: 0.9; }
+            100% { transform: scale(1.1) rotate(2deg); opacity: 1; box-shadow: 0 0 20px #f97316, 0 0 40px #facc15; }
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-150vh) rotate(15deg); opacity: 0; }
+        }
+        .balloon-anim {
+            animation: floatUp linear forwards;
+        }
+    </style>
+</head>
+<!-- Removed overflow-hidden to allow mobile users to scroll on taller content pages, replaced with overflow-x-hidden -->
+<body class="font-sans text-brand-dark min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Audio Player -->
+    <div class="fixed top-4 right-4 md:top-6 md:right-6 z-50">
+        <button id="music-toggle" onclick="toggleMusic()" class="bg-white/90 p-3 rounded-full shadow-xl text-xl md:text-2xl hover:scale-110 transition-transform border-2 border-pink-200">
+            🔇
+        </button>
+        <!-- 📝 EDIT HERE: You can replace the src with any upbeat/happy mp3 link -->
+        <audio id="bg-music" loop preload="auto">
+            <source src="https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=upbeat-acoustic-113986.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <!-- Background Decorations (Floating Hearts) -->
+    <div class="fixed top-10 left-4 md:left-10 text-red-400 text-3xl md:text-4xl floating-heart" style="animation-delay: 0s;">❤️</div>
+    <div class="fixed bottom-20 left-10 md:left-20 text-red-400 text-4xl md:text-5xl floating-heart" style="animation-delay: 1s;">❤️</div>
+    <div class="fixed top-1/4 right-4 md:right-10 text-red-400 text-2xl md:text-3xl floating-heart" style="animation-delay: 2s;">❤️</div>
+    <div class="fixed bottom-10 right-16 md:right-32 text-red-400 text-3xl md:text-4xl floating-heart" style="animation-delay: 3s;">❤️</div>
+
+    <!-- MAIN APP CONTAINER -->
+    <!-- Adjusted to allow dynamic sizing and vertical centering natively -->
+    <div class="content-container w-full max-w-5xl mx-auto px-4 py-12 flex-grow flex flex-col justify-center items-center">
+
+        <!-- ================= SCREEN 1: Intro ================= -->
+        <div id="slide-1" class="slide active flex-col items-center justify-center text-center">
+            <!-- ✍️ ADD WRITEUP HERE: You can change the introductory text below -->
+            <h1 class="font-cursive text-5xl md:text-7xl text-red-600 mb-4 px-2">Hey Beautifull</h1>
+            <p class="text-xl md:text-3xl font-bold tracking-wide mb-10 px-2">I MADE SOMETHING SPECIAL FOR YOU...</p>
+            
+            <!-- Gift Icon (SVG) -->
+            <div class="text-8xl md:text-9xl mb-10 animate-bounce">
+                🎁
+            </div>
+
+            <button onclick="nextSlide(2)" class="bg-brand-red text-white text-lg md:text-2xl px-8 md:px-10 py-3 md:py-4 rounded-full font-bold btn-hover shadow-lg w-full max-w-xs mx-auto">
+                Click to open
+            </button>
+        </div>
+
+        <!-- ================= SCREEN 2: Surprise Ready? ================= -->
+        <div id="slide-2" class="slide flex-col items-center justify-center text-center">
+            <h2 class="text-3xl md:text-5xl font-bold mb-10 md:mb-12 uppercase leading-tight px-2">Are you ready for a little surprise? 👀</h2>
+            
+            <div class="flex flex-wrap justify-center gap-4 w-full">
+                <button onclick="nextSlide(3)" class="bg-brand-red text-white text-lg md:text-2xl px-6 md:px-8 py-3 rounded-full font-bold btn-hover shadow-md flex-1 min-w-[140px] max-w-[200px]">
+                    Yes 💖
+                </button>
+                <button onclick="nextSlide(3)" class="bg-brand-red text-white text-lg md:text-2xl px-6 md:px-8 py-3 rounded-full font-bold btn-hover shadow-md flex-1 min-w-[140px] max-w-[200px]">
+                    Of Course ✨
+                </button>
+            </div>
+            <!-- Interactive "No" button that dodges the cursor -->
+            <button id="runaway-btn-1" class="mt-6 bg-brand-red text-white text-lg md:text-2xl px-8 py-3 rounded-full font-bold shadow-md transition-all duration-200 w-auto">
+                No 😂
+            </button>
+        </div>
+
+        <!-- ================= SCREEN 3: How much do you love me? ================= -->
+        <div id="slide-3" class="slide flex-col items-center justify-center text-center">
+            <h2 class="text-3xl md:text-5xl font-bold mb-10 md:mb-12 uppercase px-2">Do you know how much you mean to me?</h2>
+            
+            <div class="flex flex-wrap justify-center gap-4 w-full">
+                <!-- Interactive "A Little" button that dodges the cursor -->
+                <button id="runaway-btn-2" class="bg-brand-red text-white text-lg md:text-2xl px-6 md:px-8 py-3 rounded-full font-bold shadow-md transition-all duration-200 flex-1 min-w-[140px] max-w-[200px]">
+                    A Little 😒
+                </button>
+                <button onclick="nextSlide(4)" class="bg-brand-red text-white text-lg md:text-2xl px-6 md:px-8 py-3 rounded-full font-bold btn-hover shadow-md flex-1 min-w-[140px] max-w-[200px]">
+                    A Lot 😍
+                </button>
+            </div>
+            <button onclick="nextSlide(4)" class="mt-6 bg-brand-red text-white text-lg md:text-2xl px-10 md:px-12 py-3 rounded-full font-bold btn-hover shadow-md w-full max-w-xs mx-auto">
+                Infinite ∞
+            </button>
+        </div>
+
+        <!-- ================= SCREEN 4: First Chat ================= -->
+        <div id="slide-4" class="slide flex-col items-center justify-center text-center">
+            <h2 class="text-3xl md:text-5xl font-bold mb-8 uppercase px-2">Do you remember our first chat? 💬</h2>
+            
+            <div class="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-10 w-full mb-10 px-2">
+                <!-- 🖼️ ADD IMAGE HERE: Screenshot of your first chat or a funny conversation -->
+                <div class="w-full sm:w-3/4 md:w-1/2 max-w-sm bg-white p-2 rounded-xl shadow-lg transform md:-rotate-3 mx-auto">
+                    <!-- Replace the link inside src="..." with your actual chat screenshot URL -->
+                    <img src="https://placehold.co/400x500/f3f4f6/a1a1aa?text=Your+Chat+Screenshot+Here" alt="First Chat" class="w-full h-auto rounded-lg">
+                </div>
+                
+                <div class="w-full md:w-1/2 text-center md:text-left mt-6 md:mt-0">
+                    <!-- ✍️ ADD WRITEUP HERE: Description of the chat memory -->
+                    <p class="text-2xl md:text-3xl mb-4 font-semibold text-brand-dark">I still smile when I remember this conversation 💬❤️</p>
+                    <p class="text-lg md:text-2xl text-gray-800">One of my favorite memories with you... simple, funny, and unforgettable.</p>
+                </div>
+            </div>
+
+            <button onclick="nextSlide(5)" class="bg-brand-red text-white text-lg md:text-2xl px-10 py-3 rounded-full font-bold btn-hover shadow-md w-full max-w-xs mx-auto">
+                Next
+            </button>
+        </div>
+
+        <!-- ================= SCREEN 5: What I love most ================= -->
+        <div id="slide-5" class="slide flex-col items-center justify-center text-center">
+            <h2 class="text-3xl md:text-5xl font-bold mb-10 md:mb-12 uppercase px-4">You know what I love the most?</h2>
+            
+            <button onclick="nextSlide(6)" class="bg-brand-red text-white text-lg md:text-2xl px-10 py-3 rounded-full font-bold btn-hover shadow-md w-full max-w-xs mx-auto">
+                Click to know
+            </button>
+        </div>
+
+        <!-- ================= SCREEN 6: Your Smile ================= -->
+        <div id="slide-6" class="slide flex-col items-center justify-center text-center">
+            <h2 class="text-4xl md:text-5xl font-bold mb-8 uppercase">Your Smile 😊</h2>
+            
+            <!-- 🖼️ ADD IMAGE HERE: A beautiful or funny picture of her smiling -->
+            <div class="w-full sm:w-11/12 max-w-2xl bg-white p-3 rounded-2xl shadow-xl mb-10 border-4 border-red-400 mx-auto">
+                <!-- Replace the link inside src="..." with a link to her photo -->
+                <img src="https://placehold.co/800x500/ffb6c1/ffffff?text=Her+Smiling+Photo+Here" alt="Beautiful Smile" class="w-full h-auto rounded-xl object-cover" style="max-height: 60vh;">
+            </div>
+
+            <button onclick="nextSlide(7)" class="bg-brand-red text-white text-lg md:text-2xl px-12 py-3 rounded-full font-bold btn-hover shadow-md w-full max-w-xs mx-auto">
+                Next
+            </button>
+        </div>
+
+        <!-- ================= SCREEN 7: Memory Lane ================= -->
+        <div id="slide-7" class="slide flex-col items-center justify-center text-center py-6">
+            <h2 class="text-3xl md:text-5xl font-bold mb-8 uppercase px-2">Every moment with you is magic ✨</h2>
+            
+            <!-- Responsive flex container for polaroids -->
+            <div class="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-8 mb-10 w-full max-w-4xl px-2">
+                <!-- 🖼️ ADD IMAGE & ✍️ ADD WRITEUP HERE: Polaroid 1 -->
+                <div class="bg-white p-3 pb-8 md:p-4 md:pb-12 rounded-lg shadow-xl transform sm:-rotate-6 sm:hover:rotate-0 transition-transform duration-300 w-4/5 sm:w-48 md:w-56 mx-auto">
+                    <!-- Image 1 -->
+                    <img src="https://placehold.co/400x400/ffb6c1/ffffff?text=Photo+1" alt="Memory" class="w-full h-auto rounded border border-gray-200">
+                    <!-- Text 1 -->
+                    <p class="font-cursive text-xl md:text-2xl mt-3 md:mt-4 text-gray-700">Our first date</p>
+                </div>
+                <!-- 🖼️ ADD IMAGE & ✍️ ADD WRITEUP HERE: Polaroid 2 -->
+                <div class="bg-white p-3 pb-8 md:p-4 md:pb-12 rounded-lg shadow-xl transform sm:rotate-3 sm:hover:rotate-0 transition-transform duration-300 w-4/5 sm:w-48 md:w-56 mx-auto">
+                    <!-- Image 2 -->
+                    <img src="https://placehold.co/400x400/ffb6c1/ffffff?text=Photo+2" alt="Memory" class="w-full h-auto rounded border border-gray-200">
+                    <!-- Text 2 -->
+                    <p class="font-cursive text-xl md:text-2xl mt-3 md:mt-4 text-gray-700">That crazy trip</p>
+                </div>
+                <!-- 🖼️ ADD IMAGE & ✍️ ADD WRITEUP HERE: Polaroid 3 -->
+                <div class="bg-white p-3 pb-8 md:p-4 md:pb-12 rounded-lg shadow-xl transform sm:-rotate-2 sm:hover:rotate-0 transition-transform duration-300 w-4/5 sm:w-48 md:w-56 mx-auto">
+                    <!-- Image 3 -->
+                    <img src="https://placehold.co/400x400/ffb6c1/ffffff?text=Photo+3" alt="Memory" class="w-full h-auto rounded border border-gray-200">
+                    <!-- Text 3 -->
+                    <p class="font-cursive text-xl md:text-2xl mt-3 md:mt-4 text-gray-700">Just us ❤️</p>
+                </div>
+            </div>
+
+            <button onclick="nextSlide(8)" class="bg-brand-red text-white text-lg md:text-2xl px-12 py-3 rounded-full font-bold btn-hover shadow-md w-full max-w-xs mx-auto">
+                Next
+            </button>
+        </div>
+
+        <!-- ================= SCREEN 8: Promises ================= -->
+        <div id="slide-8" class="slide flex-col items-center justify-center text-center">
+            <h2 class="text-3xl md:text-5xl font-bold mb-8 uppercase px-2">My Promises to You 🤞</h2>
+            
+            <!-- ✍️ ADD WRITEUP HERE: Change these promises to inside jokes or actual promises to your best friend -->
+            <div class="bg-white/80 p-6 md:p-8 rounded-3xl shadow-xl border-4 border-pink-200 text-left max-w-lg w-full mb-10 space-y-4 md:space-y-5 text-base md:text-2xl font-medium text-gray-800 mx-auto">
+                <div class="flex items-center gap-3 md:gap-4 hover:translate-x-2 transition-transform"><span class="text-2xl md:text-3xl">💖</span> To always make you smile</div>
+                <div class="flex items-center gap-3 md:gap-4 hover:translate-x-2 transition-transform"><span class="text-2xl md:text-3xl">🍕</span> To share my last slice of pizza</div>
+                <div class="flex items-center gap-3 md:gap-4 hover:translate-x-2 transition-transform"><span class="text-2xl md:text-3xl">👂</span> To listen to your rants anytime</div>
+                <div class="flex items-center gap-3 md:gap-4 hover:translate-x-2 transition-transform"><span class="text-2xl md:text-3xl">🛡️</span> To always have your back</div>
+                <div class="flex items-center gap-3 md:gap-4 hover:translate-x-2 transition-transform"><span class="text-2xl md:text-3xl">👯‍♀️</span> To be your partner-in-crime forever</div>
+            </div>
+
+            <button onclick="nextSlide(9)" class="bg-brand-red text-white text-lg md:text-2xl px-12 py-3 rounded-full font-bold btn-hover shadow-md w-full max-w-xs mx-auto">
+                Next
+            </button>
+        </div>
+
+        <!-- ================= SCREEN 9: Wait... ================= -->
+        <div id="slide-9" class="slide flex-col items-center justify-center text-center px-2">
+            <h2 class="text-3xl md:text-5xl font-bold text-red-600 mb-3 md:mb-4 uppercase tracking-widest">Wait...</h2>
+            <h2 class="text-2xl md:text-5xl font-bold mb-10 md:mb-12 uppercase leading-snug md:leading-tight">Isn't today someone very special's birthday? 🎂</h2>
+            
+            <button onclick="nextSlide(10)" class="bg-brand-red text-white text-lg md:text-2xl px-12 py-3 rounded-full font-bold btn-hover shadow-md w-full max-w-xs mx-auto">
+                Who? 👀
+            </button>
+        </div>
+
+        <!-- ================= SCREEN 10: Final Letter & Collage ================= -->
+        <div id="slide-10" class="slide flex-col items-center justify-start sm:justify-center py-6">
+            <h1 class="text-4xl md:text-7xl font-bold mb-8 uppercase text-center w-full">YOU 💖</h1>
+            
+            <div class="flex flex-col lg:flex-row items-center justify-center gap-8 md:gap-12 w-full max-w-6xl">
+                
+                <!-- The Letter -->
+                <div class="w-full lg:w-1/2 bg-white p-6 md:p-10 rounded-lg paper-shadow relative mx-auto max-w-lg">
+                    <!-- Pin decoration -->
+                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 w-6 h-6 md:w-8 md:h-8 bg-red-400 rounded-full shadow-md border-4 border-white"></div>
+                    
+                    <!-- ✍️ ADD WRITEUP HERE: Your personal birthday letter to her -->
+                    <h3 class="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-center lg:text-left">Happy Birthday, Bestie! 🎉🎂</h3>
+                    
+                    <div class="space-y-3 md:space-y-4 text-base md:text-xl text-gray-800 leading-relaxed font-medium">
+                        <p>Today is all about you, your smile, your happiness, and the beautiful person you are.</p>
+                        <p>Thank you for being part of my life and making every moment special.</p>
+                        <p>I feel lucky to have you, and I hope this year brings you endless happiness, success, and love.</p>
+                        <p>Keep smiling, keep shining, and always stay the amazing person you are.</p>
+                        <p class="font-bold text-red-600 mt-4 md:mt-6 text-center lg:text-left">You are the absolute best friend anyone could ask for 💖</p>
+                        <p class="pt-2 md:pt-4 text-center lg:text-left">Once again,<br>Happy Birthday Beautiful 🎉</p>
+                    </div>
+                </div>
+
+                <!-- 🖼️ ADD IMAGE HERE: The Photo Collage -->
+                <div class="w-full lg:w-1/2 flex justify-center mt-6 lg:mt-0 px-2">
+                    <!-- Create a collage in an app like Canva, upload it, and paste the link in the src="..." below -->
+                    <img src="https://placehold.co/600x600/f3f4f6/a1a1aa?text=Add+Heart+Collage+Image+Here" alt="Our Memories" class="w-full max-w-sm md:max-w-md rounded-2xl shadow-xl transform sm:rotate-2">
+                </div>
+
+            </div>
+            
+            <!-- Button to transition to the newly added features -->
+            <button onclick="nextSlide(11)" class="mt-10 md:mt-12 bg-brand-red text-white text-lg md:text-2xl px-8 md:px-12 py-3 md:py-4 rounded-full font-bold btn-hover shadow-lg w-full max-w-xs mx-auto block text-center">
+                Wait, there is more...
+            </button>
+        </div>
+
+        <!-- ================= SCREEN 11: Interactive "Reasons I Love You" ================= -->
+        <div id="slide-11" class="slide flex-col items-center justify-center py-6 px-2 text-center">
+            <h2 class="text-3xl md:text-5xl font-bold mb-3 md:mb-4 uppercase">Just a few reasons why...</h2>
+            <p class="text-lg md:text-xl mb-6 md:mb-8 text-gray-700 font-medium">Click the hearts to reveal ❤️</p>
+            
+            <!-- ✍️ ADD WRITEUP HERE: Change the text inside the single quotes of revealReason(this, 'YOUR REASON HERE') -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full max-w-4xl mb-10 md:mb-12">
+                <!-- Reason Cards -->
+                <div class="reason-card bg-white p-4 rounded-2xl shadow-md cursor-pointer text-center text-base md:text-xl font-bold hover:scale-105 transition-all h-28 md:h-32 flex items-center justify-center border-2 border-pink-200 text-red-500 mx-auto w-full max-w-[280px] sm:max-w-none" onclick="revealReason(this, 'You make me laugh every single day 😂')">
+                    ❤️ Tap Me
+                </div>
+                <div class="reason-card bg-white p-4 rounded-2xl shadow-md cursor-pointer text-center text-base md:text-xl font-bold hover:scale-105 transition-all h-28 md:h-32 flex items-center justify-center border-2 border-pink-200 text-red-500 mx-auto w-full max-w-[280px] sm:max-w-none" onclick="revealReason(this, 'Your kindness towards everyone 🌸')">
+                    ❤️ Tap Me
+                </div>
+                <div class="reason-card bg-white p-4 rounded-2xl shadow-md cursor-pointer text-center text-base md:text-xl font-bold hover:scale-105 transition-all h-28 md:h-32 flex items-center justify-center border-2 border-pink-200 text-red-500 mx-auto w-full max-w-[280px] sm:max-w-none" onclick="revealReason(this, 'Your crazy and infectious energy ✨')">
+                    ❤️ Tap Me
+                </div>
+                <div class="reason-card bg-white p-4 rounded-2xl shadow-md cursor-pointer text-center text-base md:text-xl font-bold hover:scale-105 transition-all h-28 md:h-32 flex items-center justify-center border-2 border-pink-200 text-red-500 mx-auto w-full max-w-[280px] sm:max-w-none" onclick="revealReason(this, 'You support all my crazy dreams 🚀')">
+                    ❤️ Tap Me
+                </div>
+                <div class="reason-card bg-white p-4 rounded-2xl shadow-md cursor-pointer text-center text-base md:text-xl font-bold hover:scale-105 transition-all h-28 md:h-32 flex items-center justify-center border-2 border-pink-200 text-red-500 mx-auto w-full max-w-[280px] sm:max-w-none" onclick="revealReason(this, 'We can talk for hours about nothing 🗣️')">
+                    ❤️ Tap Me
+                </div>
+                <div class="reason-card bg-white p-4 rounded-2xl shadow-md cursor-pointer text-center text-base md:text-xl font-bold hover:scale-105 transition-all h-28 md:h-32 flex items-center justify-center border-2 border-pink-200 text-red-500 mx-auto w-full max-w-[280px] sm:max-w-none" onclick="revealReason(this, 'You are my ultimate partner-in-crime 👯‍♀️')">
+                    ❤️ Tap Me
+                </div>
+            </div>
+
+            <button onclick="nextSlide(12)" class="bg-brand-red text-white text-lg md:text-2xl px-8 md:px-12 py-3 md:py-4 rounded-full font-bold btn-hover shadow-lg w-full max-w-xs mx-auto">
+                One Final Surprise 🔮
+            </button>
+        </div>
+
+        <!-- ================= SCREEN 12: Magical Oracle (Gemini API) ================= -->
+        <div id="slide-12" class="slide flex-col items-center justify-center text-center py-6 px-2">
+            <h2 class="text-3xl md:text-5xl font-bold mb-4 md:mb-6 uppercase">A Magical Birthday Oracle 🔮</h2>
+            <p class="text-lg md:text-2xl mb-6 md:mb-8 max-w-2xl text-gray-800 font-medium">
+                The stars have aligned for your special day. Tell the magical oracle your biggest wish for this year, and it will read your future...
+            </p>
+
+            <input type="text" id="wish-input" class="w-full max-w-md px-4 md:px-6 py-3 md:py-4 rounded-full text-base md:text-lg shadow-inner mb-6 border-2 border-red-200 focus:outline-none focus:border-red-400 text-center" placeholder="e.g. I wish for endless adventures...">
+
+            <button onclick="revealFortune()" id="fortune-btn" class="bg-brand-red text-white text-lg md:text-2xl px-8 md:px-10 py-3 rounded-full font-bold btn-hover shadow-md mb-8 w-full max-w-xs mx-auto">
+                ✨ Reveal my fortune ✨
+            </button>
+
+            <div id="fortune-loading" class="hidden text-xl md:text-2xl text-red-600 font-bold animate-pulse mb-8">
+                Consulting the stars... 🌟
+            </div>
+
+            <div id="fortune-result" class="hidden w-full max-w-2xl bg-white p-6 md:p-8 rounded-2xl shadow-xl border-4 border-brand-pink text-center text-lg md:text-2xl font-medium text-gray-800 italic relative mx-auto mt-4 md:mt-6">
+               <span class="absolute -top-5 md:-top-6 -left-3 md:-left-4 text-4xl md:text-5xl">🔮</span>
+               <p id="fortune-text"></p>
+               <span class="absolute -bottom-5 md:-bottom-6 -right-3 md:-right-4 text-4xl md:text-5xl">🔮</span>
+            </div>
+            
+            <!-- New Finale Button -->
+            <button onclick="nextSlide(13)" id="finale-btn" class="hidden mt-12 bg-brand-red text-white text-lg md:text-2xl px-8 md:px-12 py-3 md:py-4 rounded-full font-bold btn-hover shadow-lg w-full max-w-sm mx-auto animate-bounce text-center">
+                Claim Your Present 🎁
+            </button>
+        </div>
+
+        <!-- ================= SCREEN 13: Grand Finale Celebration ================= -->
+        <div id="slide-13" class="slide flex-col items-center justify-center text-center py-6 px-2 min-h-[80vh] relative">
+            <!-- Balloon Container -->
+            <div id="balloons-container" class="absolute inset-0 overflow-hidden pointer-events-none z-0"></div>
+
+            <div class="z-10 flex flex-col items-center w-full">
+                <h2 id="finale-title" class="text-4xl md:text-6xl font-bold mb-12 uppercase text-red-600 drop-shadow-md">Make a Wish! ✨</h2>
+                
+                <!-- Cake CSS Graphic -->
+                <div class="relative w-64 h-64 mx-auto mb-16 transform scale-110 md:scale-125 transition-all">
+                    <!-- Flame -->
+                    <div id="cake-flame" class="absolute top-4 left-1/2 transform -translate-x-1/2 w-5 h-8 bg-yellow-400 rounded-[50%_50%_30%_30%] candle-flame shadow-[0_0_15px_#facc15] z-30 cursor-pointer" onclick="blowOutCandle()"></div>
+                    <!-- Candle -->
+                    <div class="absolute top-12 left-1/2 transform -translate-x-1/2 w-4 h-16 bg-blue-300 rounded-sm border-x border-blue-400 z-20 overflow-hidden">
+                        <!-- Candle stripes -->
+                        <div class="w-full h-3 bg-white transform -rotate-45 mt-2"></div>
+                        <div class="w-full h-3 bg-white transform -rotate-45 mt-4"></div>
+                    </div>
+                    <!-- Frosting / Drip -->
+                    <div class="absolute top-24 left-1/2 transform -translate-x-1/2 w-48 h-12 bg-pink-100 rounded-t-xl rounded-b-full shadow-sm z-20 flex justify-evenly items-end pb-2">
+                        <div class="w-2 h-4 bg-red-400 rounded-full transform rotate-12"></div>
+                        <div class="w-2 h-4 bg-blue-400 rounded-full transform -rotate-12"></div>
+                        <div class="w-2 h-4 bg-yellow-400 rounded-full transform rotate-45"></div>
+                        <div class="w-2 h-4 bg-green-400 rounded-full transform -rotate-45"></div>
+                        <div class="w-2 h-4 bg-purple-400 rounded-full transform rotate-12"></div>
+                    </div>
+                    <!-- Cake Body -->
+                    <div class="absolute top-28 left-1/2 transform -translate-x-1/2 w-48 h-24 bg-pink-400 rounded-xl border-b-8 border-pink-500 shadow-inner z-10 flex flex-col justify-center">
+                        <div class="w-full h-2 bg-pink-500 opacity-30 mt-4"></div>
+                    </div>
+                    <!-- Plate -->
+                    <div class="absolute top-52 left-1/2 transform -translate-x-1/2 w-64 h-8 bg-gray-200 rounded-full border-b-4 border-gray-300 shadow-xl z-0"></div>
+                </div>
+
+                <button id="blow-btn" onclick="blowOutCandle()" class="bg-brand-red text-white text-xl md:text-3xl px-10 md:px-14 py-4 rounded-full font-bold btn-hover shadow-lg w-full max-w-sm mx-auto">
+                    Blow out the candle 🌬️
+                </button>
+
+                <!-- ✍️ ADD WRITEUP HERE: The final beautiful quote when the candle is blown out -->
+                <div id="finale-quote" class="mt-8 md:mt-12 max-w-2xl px-4 opacity-0 transition-opacity duration-1000 delay-500">
+                    <p class="font-cursive text-3xl md:text-5xl text-pink-600 drop-shadow-sm leading-relaxed">
+                        "A best friend is someone who makes you laugh a little louder, smile a little brighter, and live a little better. Happy Birthday to my favorite person!" 💖
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- Navigation Logic ---
+        function nextSlide(slideNumber) {
+            // Hide all slides
+            const slides = document.querySelectorAll('.slide');
+            slides.forEach(slide => {
+                slide.classList.remove('active');
+                // Small delay to allow CSS animation to catch up visually
+                // FIX: Only hide the slide if it is NOT the one we are trying to show
+                if (slide.id !== `slide-${slideNumber}`) {
+                    setTimeout(() => slide.style.display = 'none', 500); 
+                }
+            });
+
+            // Show target slide
+            const targetSlide = document.getElementById(`slide-${slideNumber}`);
+            targetSlide.style.display = 'flex';
+            // Force a reflow so the transition applies
+            targetSlide.offsetHeight; 
+            targetSlide.classList.add('active');
+            
+            // Scroll to top nicely for mobile when switching slides
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Trigger Confetti on the letter slide (now Slide 10)
+            if (slideNumber === 10) {
+                fireConfetti();
+            }
+        }
+
+        // --- Music Player Logic ---
+        let isMusicPlaying = false;
+        function toggleMusic() {
+            const music = document.getElementById('bg-music');
+            const btn = document.getElementById('music-toggle');
+            
+            if (isMusicPlaying) {
+                music.pause();
+                btn.innerText = '🔇';
+            } else {
+                music.play();
+                btn.innerText = '🔊';
+            }
+            isMusicPlaying = !isMusicPlaying;
+        }
+
+        // --- Reason Reveal Logic ---
+        function revealReason(element, text) {
+            // Prevent re-triggering if already clicked
+            if (element.classList.contains('bg-brand-pink')) return;
+            
+            // Change content and style softly
+            element.innerHTML = `<span class="animate-pulse text-brand-dark">${text}</span>`;
+            element.classList.remove('bg-white', 'text-red-500');
+            element.classList.add('bg-brand-pink', 'border-red-400');
+            
+            // Pop a tiny burst of confetti directly over the clicked card!
+            const rect = element.getBoundingClientRect();
+            confetti({
+                particleCount: 20,
+                spread: 40,
+                origin: {
+                    x: (rect.left + (rect.width / 2)) / window.innerWidth,
+                    y: (rect.top + (rect.height / 2)) / window.innerHeight
+                },
+                zIndex: 100,
+                colors: ['#e06666', '#ffd1d9', '#ffffff']
+            });
+        }
+
+        // --- Runaway Button Logic (For "No" and "A Little" buttons) ---
+        function makeButtonRunaway(btnId) {
+            const btn = document.getElementById(btnId);
+            if (!btn) return;
+            
+            const moveButton = () => {
+                // Get window dimensions safely
+                const xMax = Math.max(10, window.innerWidth - btn.offsetWidth - 20);
+                const yMax = Math.max(10, window.innerHeight - btn.offsetHeight - 20);
+                
+                // Calculate random positions
+                const randomX = Math.floor(Math.random() * xMax);
+                const randomY = Math.floor(Math.random() * yMax);
+                
+                // Apply absolute positioning
+                btn.style.position = 'fixed';
+                btn.style.left = `${randomX}px`;
+                btn.style.top = `${randomY}px`;
+                btn.style.zIndex = '1000';
+            };
+
+            // Triggers for both mouse (desktop) and touch (mobile)
+            btn.addEventListener('mouseover', moveButton);
+            btn.addEventListener('touchstart', (e) => {
+                e.preventDefault(); // Prevent accidental clicks while touching
+                moveButton();
+            });
+        }
+
+        // Initialize runaway buttons
+        makeButtonRunaway('runaway-btn-1');
+        makeButtonRunaway('runaway-btn-2');
+
+        // --- Confetti Animation Logic ---
+        function fireConfetti() {
+            var duration = 15 * 1000; // 15 seconds of confetti
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                var particleCount = 50 * (timeLeft / duration);
+                
+                // Fire from multiple origins for a fuller effect
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250); // Bug fix here: removed rogue "a" that caused error
+        }
+
+        // --- Gemini API Magical Oracle Logic ---
+        const apiKey = ""; // API key is automatically injected by the environment
+
+        async function generateWithRetry(prompt, retries = 5) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                systemInstruction: { 
+                    parts: [{ text: "You are a fun, magical, and encouraging birthday oracle. The user is the best friend of the person who created this app. Write a sweet, exciting, and highly supportive 2-3 sentence prediction about how their birthday wish will come true in wonderful ways. Focus on their amazing friendship. Keep it brief and uplifting." }] 
+                }
+            };
+
+            let delay = 1000;
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    return data.candidates[0].content.parts[0].text;
+                } catch (error) {
+                    if (i === retries - 1) throw error;
+                    await new Promise(res => setTimeout(res, delay));
+                    delay *= 2; // Exponential backoff: 1s, 2s, 4s, 8s, 16s
+                }
+            }
+        }
+
+        async function revealFortune() {
+            const wishInput = document.getElementById('wish-input').value.trim();
+            if (!wishInput) {
+                // Flash the input border red if empty
+                const inputEl = document.getElementById('wish-input');
+                inputEl.classList.add('border-red-500');
+                setTimeout(() => inputEl.classList.remove('border-red-500'), 1000);
+                return;
+            }
+
+            // UI State updates
+            document.getElementById('fortune-btn').classList.add('hidden');
+            document.getElementById('fortune-result').classList.add('hidden');
+            document.getElementById('fortune-loading').classList.remove('hidden');
+            document.getElementById('wish-input').disabled = true;
+
+            try {
+                const promptText = `My birthday wish is: ${wishInput}`;
+                const fortune = await generateWithRetry(promptText);
+                
+                // Show result
+                document.getElementById('fortune-text').innerText = fortune;
+                document.getElementById('fortune-loading').classList.add('hidden');
+                document.getElementById('fortune-result').classList.remove('hidden');
+                
+                // Pop some extra confetti for the grand reveal!
+                fireConfetti();
+                
+                // Show finale button after a short delay
+                setTimeout(() => {
+                    document.getElementById('finale-btn').classList.remove('hidden');
+                }, 3500);
+                
+            } catch (error) {
+                document.getElementById('fortune-loading').classList.add('hidden');
+                document.getElementById('fortune-text').innerText = "The stars are a bit cloudy right now... but I predict a year full of love and happiness anyway!";
+                document.getElementById('fortune-result').classList.remove('hidden');
+                
+                // Show finale button even on error
+                setTimeout(() => {
+                    document.getElementById('finale-btn').classList.remove('hidden');
+                }, 3500);
+            }
+            
+            // Re-enable in case they want to ask again
+            document.getElementById('fortune-btn').classList.remove('hidden');
+            document.getElementById('wish-input').disabled = false;
+            document.getElementById('fortune-btn').innerText = "✨ Ask another wish ✨";
+            document.getElementById('wish-input').value = "";
+        }
+
+        // --- Grand Finale Logic ---
+        let confettiInterval;
+        function blowOutCandle() {
+            // Hide flame
+            document.getElementById('cake-flame').classList.add('hidden');
+            
+            // Change Text
+            const title = document.getElementById('finale-title');
+            title.innerHTML = "HAPPY BIRTHDAY!!! 🎉🥳🎂";
+            title.classList.add('animate-pulse', 'text-5xl', 'md:text-7xl');
+            
+            // Hide button
+            document.getElementById('blow-btn').classList.add('hidden');
+
+            // Reveal the beautiful quote
+            const quote = document.getElementById('finale-quote');
+            if (quote) {
+                quote.classList.remove('opacity-0');
+                quote.classList.add('opacity-100');
+            }
+
+            // Release Balloons
+            createBalloons();
+
+            // Continuous Confetti Party
+            if (confettiInterval) clearInterval(confettiInterval);
+            confettiInterval = setInterval(() => {
+                confetti({
+                    particleCount: 15,
+                    spread: 120,
+                    origin: { y: 0.1, x: Math.random() },
+                    colors: ['#e06666', '#ffd1d9', '#ffffff', '#facc15', '#a855f7']
+                });
+            }, 300);
+            
+            // Clear interval after 20 seconds to prevent performance issues indefinitely
+            setTimeout(() => clearInterval(confettiInterval), 20000);
+        }
+
+        function createBalloons() {
+            const container = document.getElementById('balloons-container');
+            container.innerHTML = ''; // clear any existing
+            const colors = ['bg-red-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-400', 'bg-purple-500', 'bg-pink-500'];
+            
+            for(let i = 0; i < 40; i++) {
+                let balloonWrapper = document.createElement('div');
+                let duration = Math.random() * 5 + 4; // 4 to 9 seconds
+                let delay = Math.random() * 2; // 0 to 2 seconds delay
+                
+                balloonWrapper.className = `absolute bottom-[-200px] flex flex-col items-center balloon-anim`;
+                balloonWrapper.style.left = `${Math.random() * 90}%`;
+                balloonWrapper.style.animationDuration = `${duration}s`;
+                balloonWrapper.style.animationDelay = `${delay}s`;
+                
+                // Balloon body
+                let color = colors[Math.floor(Math.random() * colors.length)];
+                let balloon = document.createElement('div');
+                balloon.className = `w-12 h-16 md:w-16 md:h-20 rounded-[50%_50%_50%_50%/40%_40%_60%_60%] shadow-inner opacity-90 ${color}`;
+                
+                // Balloon knot
+                let knot = document.createElement('div');
+                knot.className = `w-3 h-3 transform rotate-45 ${color} opacity-90 mt-[-6px] rounded-sm shadow-sm`;
+                
+                // String
+                let string = document.createElement('div');
+                string.className = `w-[1px] h-16 md:h-24 bg-gray-400 opacity-60 mt-[-2px]`;
+                
+                balloonWrapper.appendChild(balloon);
+                balloonWrapper.appendChild(knot);
+                balloonWrapper.appendChild(string);
+                
+                container.appendChild(balloonWrapper);
+            }
+        }
+    </script>
+</body>
+</html>
